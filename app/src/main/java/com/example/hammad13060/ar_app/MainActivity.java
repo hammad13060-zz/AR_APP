@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -23,7 +24,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.location.Location;
 import android.media.ImageReader;
-import android.opengl.Matrix;
+import android.graphics.Matrix;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -195,11 +196,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     // camera work
-
+    private Size dim;
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             openCamera();
+            dim = new Size(width, height);
         }
 
         @Override
@@ -218,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "onOpened");
             cameraDevice = camera;
             createCameraPreview();
+            transformImage(dim.getWidth(), dim.getHeight());
         }
 
         @Override
@@ -261,8 +264,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             SurfaceTexture texture = textureView.getSurfaceTexture();
             assert texture != null;
-            //texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
-            texture.setDefaultBufferSize(imageDimension.getHeight(), imageDimension.getWidth());
+            texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
+            //texture.setDefaultBufferSize(imageDimension.getHeight(), imageDimension.getWidth());
+            //textureView.setAspectRatio(imageDimension.getHeight(), imageDimension.getWidth());
             Surface surface = new Surface(texture);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
@@ -333,4 +337,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-}
+
+    private void transformImage (int width, int height) {
+        if (imageDimension == null || textureView == null) {
+            return;
+        }
+        Matrix matrix = new Matrix();
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        RectF textureRectF = new RectF(0, 0, width, height);
+        RectF previewRectF = new RectF(0, 0, imageDimension.getHeight(), imageDimension.getWidth());
+        float centerX = textureRectF.centerX();
+        float centery = textureRectF.centerY();
+
+        if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270) {
+        } else if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            previewRectF.offset(centerX - previewRectF.centerX(), centery - previewRectF.centerY());
+            matrix.setRectToRect(textureRectF, previewRectF, Matrix.ScaleToFit.FILL);
+            float scale = Math.max((float) width / imageDimension.getWidth(), (float) height / imageDimension.getHeight());
+
+            //matrix.postScale(scale, scale, centerX, centery);
+            matrix.postScale(scale, scale, centerX, centery);
+            matrix.postRotate(90 * (rotation - 2), centerX, centery);
+            textureView.setTransform(matrix);
+
+        }
+    }
+
+
+
+    }
