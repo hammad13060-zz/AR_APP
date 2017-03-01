@@ -36,10 +36,13 @@ public class MapHandler implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
         if (listner != null) {
             googleMap.setOnMapClickListener(listner);
+            googleMap.getUiSettings().setZoomControlsEnabled(false);
+            googleMap.getUiSettings().setScrollGesturesEnabled(false);
         }
-        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         double lat = SensorService.latitude;
         double lon = SensorService.longitude;
         currentLocationMarker = googleMap.addMarker(
