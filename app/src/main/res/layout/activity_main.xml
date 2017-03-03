@@ -31,4 +31,17 @@
         android:layout_marginRight="10dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:clickable="true"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/mr_ic_play_light"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/nav_action"
+        app:backgroundTint="?attr/actionModeSplitBackground" />
 </RelativeLayout>

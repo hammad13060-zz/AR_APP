@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_navigation_setup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.hammad13060.ar_app.NavigationSetupActivity">
+
+
+    <TextView
+        android:text="Source: Your Current Location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="51dp"
+        android:id="@+id/textView2" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/select_destination_button"
+        android:onClick="onSelectDestination"
+        tools:text="Select Destination"
+        android:layout_below="@+id/destination_text_view"
+        android:layout_alignEnd="@+id/destination_text_view"
+        android:layout_marginTop="68dp" />
+
+    <Button
+        android:text="Start Navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="88dp"
+        android:id="@+id/start_journey_button"
+        android:onClick="onStartJourney"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/destination_text_view" />
+
+    <TextView
+        android:text="Destination: Not Selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:id="@+id/destination_text_view"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

@@ -3,11 +3,11 @@
     package="com.example.hammad13060.ar_app">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
@@ -18,16 +18,17 @@
         android:name="android.hardware.sensor.compass"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDfoFFDVKTlo-2e4jWvpeUb7opFKExKcgo"/>
+            android:value="AIzaSyDfoFFDVKTlo-2e4jWvpeUb7opFKExKcgo" />
 
         <activity
             android:name=".MainActivity"
@@ -49,6 +50,14 @@
         <activity
             android:name=".MapActivity"
             android:label="@string/title_activity_map"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NavigationSetupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Main2Activity"
+            android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
