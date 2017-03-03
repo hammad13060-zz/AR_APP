@@ -28,7 +28,7 @@ public class NavigationSetupActivity extends AppCompatActivity {
     public void onDestinationSelected(DestinationContainer container) {
         TextView textView = (TextView) findViewById(R.id.destination_text_view);
         Log.d(NavigationSetupActivity.class.getName(), "Destination: " + container.getName());
-        textView.setText(container.getName());
+        textView.setText("Destination: " + container.getName());
         destinationContainer = container;
         destinationSelected = true;
     }
