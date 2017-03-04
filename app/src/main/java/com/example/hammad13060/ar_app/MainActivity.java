@@ -125,6 +125,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        LatLng latLng = (new UTMRef(722445.924274, 3159942.55397, "R", 43)).toLatLng();
+        Log.d("UTM TEST", latLng.toString());
     }
 
     @Override
