@@ -1,14 +1,18 @@
 package com.example.hammad13060.ar_app;
 
 import android.content.Context;
+import android.graphics.Color;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 /**
  * Created by hammad13060 on 16/02/17.
@@ -45,10 +49,12 @@ public class MapHandler implements OnMapReadyCallback {
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         double lat = SensorService.latitude;
         double lon = SensorService.longitude;
+        plotPath();
         currentLocationMarker = googleMap.addMarker(
                 new MarkerOptions()
                         .position(new LatLng(lat, lon))
-                        .title("Your Location"));
+                        .title("Your Location")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
                 zoomIntoPath(lat, lon);
     }
 
@@ -71,6 +77,25 @@ public class MapHandler implements OnMapReadyCallback {
     public void setOnMapClick(GoogleMap.OnMapClickListener listener) {
         if (googleMap != null) {
             googleMap.setOnMapClickListener(listener);
+        }
+    }
+
+    public void plotPath() {
+        if (State.smartNavigation) {
+            MarkerOptions options = new MarkerOptions().position(State.path.get(0))
+                    .title("Source").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            googleMap.addMarker(options);
+            int i;
+            for (i = 0; i < State.path.size()-1; i++) {
+                googleMap.addPolyline(new PolylineOptions()
+                .add(State.path.get(i), State.path.get(i+1))
+                                .width(5)
+                                .color(Color.BLUE)
+                );
+            }
+            options = new MarkerOptions().position(State.path.get(i))
+                    .title("Destination").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            googleMap.addMarker(options);
         }
     }
 }

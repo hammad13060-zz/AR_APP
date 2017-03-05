@@ -64,6 +64,8 @@ public class SensorService extends Service implements GoogleApiClient.Connection
         mGoogleApiClient.connect();
     }
 
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
