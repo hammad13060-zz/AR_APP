@@ -36,13 +36,13 @@
         android:layout_marginBottom="94dp" />
 
     <Button
-        android:text="Button"
+        android:id="@+id/select_destination_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/select_destination_button"
-        android:onClick="onSelectDestination"
-        tools:text="Select Destination"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:onClick="onSelectDestination"
+        android:text="Select Destination"
+        tools:text="Select Destination" />
 
 </RelativeLayout>

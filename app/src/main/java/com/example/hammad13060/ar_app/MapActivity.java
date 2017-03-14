@@ -3,10 +3,12 @@ package com.example.hammad13060.ar_app;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
+import android.location.Location;
 import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.MainThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.MapFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
@@ -60,7 +63,7 @@ public class MapActivity extends AppCompatActivity {
 
     private void initMapHandler() {
         if (mapHandler == null) {
-            mapHandler = new MapHandler(this, 17);
+            mapHandler = new MapHandler(this, 20);
         }
     }
 
@@ -72,10 +75,17 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLocationUpdate(LocationEvent e) {
-        if (mapHandler != null) {
+        if (mapHandler != null && !State.smartNavigation) {
             mapHandler.UpdateLocation(e.getLatitude(), e.getLongitude());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onIndoorLocationUpdate(IndoorLocationEvent e) {
+        if (mapHandler != null && State.smartNavigation) {
+            mapHandler.updateLocation(e);
         }
     }
 }

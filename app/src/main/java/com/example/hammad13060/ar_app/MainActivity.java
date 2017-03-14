@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                             State.smartNavigation = false;
                             State.UTMPath = null;
                             State.path = null;
+                            State.visited = null;
                             dialog.dismiss();
                         }
                     });
@@ -215,10 +216,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLocationUpdate(LocationEvent e) {
-        if (mapHandler != null) {
+        if (mapHandler != null && !State.smartNavigation) {
             mapHandler.UpdateLocation(e.getLatitude(), e.getLongitude());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onIndoorLocationUpdate(IndoorLocationEvent e) {
+        if (mapHandler != null && State.smartNavigation) {
+            mapHandler.updateLocation(e);
         }
     }
 

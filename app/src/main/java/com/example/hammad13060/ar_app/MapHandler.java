@@ -8,7 +8,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -22,6 +25,7 @@ public class MapHandler implements OnMapReadyCallback {
     private GoogleMap googleMap;
     Marker currentLocationMarker;
     private int zoom;
+    private GroundOverlay groundOverlay = null;
     private GoogleMap.OnMapClickListener listner;
     public MapHandler(Context context, int zoom) {
         this.context = context;
@@ -46,7 +50,7 @@ public class MapHandler implements OnMapReadyCallback {
             googleMap.getUiSettings().setZoomControlsEnabled(false);
             googleMap.getUiSettings().setScrollGesturesEnabled(false);
         }
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         double lat = SensorService.latitude;
         double lon = SensorService.longitude;
         plotPath();
@@ -54,7 +58,7 @@ public class MapHandler implements OnMapReadyCallback {
                 new MarkerOptions()
                         .position(new LatLng(lat, lon))
                         .title("Your Location")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.record_button)));
                 zoomIntoPath(lat, lon);
     }
 
@@ -63,6 +67,73 @@ public class MapHandler implements OnMapReadyCallback {
             currentLocationMarker.setPosition(new LatLng(latitude, longitude));
             zoomIntoPath(latitude, longitude);
         }
+    }
+
+    public void updateLocation(IndoorLocationEvent e) {
+        if (googleMap != null) {
+            LatLng latLng = (new UTMRef(e.x, e.y, "R", 43)).toLatLng();
+            currentLocationMarker.setPosition(latLng);
+            zoomIntoPath(latLng.latitude, latLng.longitude);
+            if (listner == null) {
+                if (groundOverlay != null) {
+                    groundOverlay.remove();
+                }
+                switch (e.level) {
+                    case 0:
+                        groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromResource(R.drawable.fourth_floor_image))
+                                .positionFromBounds(new LatLngBounds(
+                                        new LatLng(28.54451610555414, 77.27222105656645),       // South west corner
+                                        new LatLng(28.544833906342745, 77.27289189854876)
+                                )));
+                        break;
+                    case 1:
+                        groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromResource(R.drawable.fourth_floor_image))
+                                .positionFromBounds(new LatLngBounds(
+                                        new LatLng(28.54451610555414, 77.27222105656645),       // South west corner
+                                        new LatLng(28.544833906342745, 77.27289189854876)
+                                )));
+                        break;
+                    case 2:
+                        groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromResource(R.drawable.fourth_floor_image))
+                                .positionFromBounds(new LatLngBounds(
+                                        new LatLng(28.54451610555414, 77.27222105656645),       // South west corner
+                                        new LatLng(28.544833906342745, 77.27289189854876)
+                                )));
+                        break;
+                    case 3:
+                        groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromResource(R.drawable.fourth_floor_image))
+                                .positionFromBounds(new LatLngBounds(
+                                        new LatLng(28.54451610555414, 77.27222105656645),       // South west corner
+                                        new LatLng(28.544833906342745, 77.27289189854876)
+                                )));
+                        break;
+                    case 4:
+                        groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromResource(R.drawable.fourth_floor_image))
+                                .positionFromBounds(new LatLngBounds(
+                                        new LatLng(28.54451610555414, 77.27222105656645),       // South west corner
+                                        new LatLng(28.544833906342745, 77.27289189854876)
+                                )));
+                        break;
+                    case 5:
+                        groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromResource(R.drawable.fourth_floor_image))
+                                .positionFromBounds(new LatLngBounds(
+                                        new LatLng(28.54451610555414, 77.27222105656645),       // South west corner
+                                        new LatLng(28.544833906342745, 77.27289189854876)
+                                )));
+                        break;
+                }
+            }
+        }
+    }
+
+    private void updateOverlay() {
+
     }
 
     private void zoomIntoPath(double lat, double lon) {

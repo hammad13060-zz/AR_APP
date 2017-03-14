@@ -20,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="META"/>
+        android:text="META"
+        android:background="@drawable/cloud"/>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         class="com.google.android.gms.maps.MapFragment"
@@ -35,8 +36,8 @@
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
         android:clickable="true"
         app:fabSize="normal"
         app:srcCompat="@drawable/mr_ic_play_light"
@@ -44,4 +45,13 @@
         android:layout_alignParentLeft="true"
         android:id="@+id/nav_action"
         app:backgroundTint="?attr/actionModeSplitBackground" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        app:srcCompat="@drawable/up"/>
 </RelativeLayout>

@@ -17,11 +17,16 @@ import java.util.Map;
 public class DestinationOptionsDialog {
     public static String destinations[] = {"Dest1", "Dest2", "Dest3", "Dest4"};
     public static Map<String, DestinationContainer> destinationMap = new HashMap<>();
+    public static double x = 722250.000, y = 3159632.00;
     static {
-        destinationMap.put(destinations[0], new DestinationContainer(destinations[0], 1.0, 1.0, 1.0));
-        destinationMap.put(destinations[1], new DestinationContainer(destinations[1], 2.0, 2.0, 2.0));
-        destinationMap.put(destinations[2], new DestinationContainer(destinations[2], 3.0, 3.0, 3.0));
-        destinationMap.put(destinations[3], new DestinationContainer(destinations[3], 4.0, 4.0, 4.0));
+        destinationMap.put(destinations[0], new DestinationContainer(destinations[0],
+                85.328733+x, 4.245343+y, 228.476078));
+        destinationMap.put(destinations[1], new DestinationContainer(destinations[1],
+                85.328733+x, 4.245343+y, 228.476078));
+        destinationMap.put(destinations[2], new DestinationContainer(destinations[2],
+                89.232023+x, -7.962436+y, 232.051479));
+        destinationMap.put(destinations[3], new DestinationContainer(destinations[3],
+                99.245795+x, 5.679707+y, 228.311822));
     }
     public static void showDialog(final NavigationSetupActivity context) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);

@@ -28,7 +28,9 @@ public class WifiUtil {
         JSONObject rssi_object = new JSONObject();
         for(String eachWifi: wifis) {
             String[] temp = eachWifi.split(",");
-            rssi_object.put(temp[1], temp[3]);
+            String key = temp[1].trim().split(" ")[1].trim();
+            String value = temp[3].trim().split(":")[1].trim();
+            rssi_object.put(key, Float.parseFloat(value));
         }
         wifiStrengthObject.put("rssi", rssi_object);
         return wifiStrengthObject;

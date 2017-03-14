@@ -80,11 +80,12 @@ public class NavigationSetupActivity extends AppCompatActivity {
                         // Toast.makeText(getApplicationContext(), "Success while hitting /indoorLocation", Toast.LENGTH_SHORT);
                         try {
                             JSONObject responseJSON = new JSONObject(response.body().string());
-                            IndoorLocationEvent indoorLocationEvent = new IndoorLocationEvent(
+                            GetIndoorLocationEvent getIndoorLocationEvent = new GetIndoorLocationEvent(
                                     responseJSON.getDouble("x"),
                                     responseJSON.getDouble("y"),
-                                    responseJSON.getDouble("z"));
-                            EventBus.getDefault().post(indoorLocationEvent);
+                                    responseJSON.getDouble("z")
+                                    );
+                            EventBus.getDefault().post(getIndoorLocationEvent);
                         } catch (JSONException e) {
                             Log.d(NavigationSetupActivity.class.getName(), "Invalid Response from /indoorLocation");
                             //Toast.makeText(getApplicationContext(), "Invalid Response from /indoorLocation", Toast.LENGTH_SHORT);
@@ -110,7 +111,7 @@ public class NavigationSetupActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void getNavigationPath(IndoorLocationEvent e) {
+    public void getNavigationPath(GetIndoorLocationEvent e) {
         JSONArray source = new JSONArray();
         JSONArray destination = new JSONArray();
         try {
@@ -151,11 +152,14 @@ public class NavigationSetupActivity extends AppCompatActivity {
 
                         JSONArray pathArray = State.UTMPath.getJSONArray("path");
                         State.path = new ArrayList<LatLng>();
+                        State.visited = new ArrayList<Boolean>();
                         for (int i = 0; i < pathArray.length(); i++) {
                             JSONArray loc = pathArray.getJSONArray(i);
                             LatLng latLng = (new UTMRef(loc.getDouble(0), loc.getDouble(1), "R", 43)).toLatLng();
                             State.path.add(latLng);
+                            State.visited.add(false);
                         }
+                        State.visited.set(0, true);
                         Intent i = new Intent(getApplicationContext(), MapActivity.class);
                         startActivity(i);
                         NavigationSetupActivity.this.finish();

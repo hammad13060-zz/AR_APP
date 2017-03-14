@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,6 +24,18 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class SensorService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, SensorEventListener {
     private static final String TAG = "SensorService";
@@ -30,6 +43,8 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
     private SensorManager mSensorManager;
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
 
     public static double latitude = 28.544568010241093, longitude = 77.27253307961047;
 
@@ -62,6 +77,8 @@ public class SensorService extends Service implements GoogleApiClient.Connection
         buildGoogleApiClient();
         makeForeground();
         mGoogleApiClient.connect();
+        EventBus.getDefault().register(this);
+        hitIndoorLocation();
     }
 
 
@@ -70,6 +87,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     public void onDestroy() {
         super.onDestroy();
         mGoogleApiClient.disconnect();
+        EventBus.getDefault().unregister(this);
         stopForeground(true);
     }
 
@@ -133,6 +151,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
         latitude = mLastLocation.getLatitude();
         longitude = mLastLocation.getLongitude();
         Log.d(TAG, "Location: " + mLastLocation.toString());
+        Log.d("GPS ACCURACY", String.valueOf(location.getAccuracy()));
         sendLocationEvent();
     }
 
@@ -161,5 +180,61 @@ public class SensorService extends Service implements GoogleApiClient.Connection
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    public void hitIndoorLocation() {
+        try {
+            JSONObject wifiSignalJSON = WifiUtil.getWifiSignalStrengthJSON(getApplicationContext());
+            String wifiSignalJSONString = wifiSignalJSON.toString();
+            RequestBody body = RequestBody.create(JSON, wifiSignalJSONString);
+
+            Request request = new Request.Builder()
+                    .url(State.SERVER_URL + "/indoorLocation")
+                    .post(body)
+                    .build();
+            State.okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.d(NavigationSetupActivity.class.getName(), "Client Error while hitting /indoorLocation");
+                    // Toast.makeText(getApplicationContext(), "Client Error while hitting /indoorLocation", Toast.LENGTH_SHORT);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Log.d(NavigationSetupActivity.class.getName(), "Success while hitting /indoorLocation");
+                    // Toast.makeText(getApplicationContext(), "Success while hitting /indoorLocation", Toast.LENGTH_SHORT);
+                    try {
+                        JSONObject responseJSON = new JSONObject(response.body().string());
+                        IndoorLocationEvent indoorLocationEvent = new IndoorLocationEvent(
+                                responseJSON.getDouble("x"),
+                                responseJSON.getDouble("y"),
+                                responseJSON.getDouble("z"),
+                                responseJSON.getInt("level"));
+                        EventBus.getDefault().post(indoorLocationEvent);
+                        EventBus.getDefault().post(new UpdateDirectionsEvent(indoorLocationEvent));
+                        try {
+                            Thread.sleep(2000);
+                            hitIndoorLocation();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (JSONException e) {
+                        Log.d(NavigationSetupActivity.class.getName(), "Invalid Response from /indoorLocation");
+                        //Toast.makeText(getApplicationContext(), "Invalid Response from /indoorLocation", Toast.LENGTH_SHORT);
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            Log.d(NavigationSetupActivity.class.getName(), "Cannot create wifi utils JSON");
+            e.printStackTrace();
+        }
+    }
+
+    @Subscribe
+    public void onDirectionsUpdate(UpdateDirectionsEvent e) {
+        if (State.smartNavigation) {
+
+        }
     }
 }
