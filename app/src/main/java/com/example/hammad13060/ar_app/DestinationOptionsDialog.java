@@ -15,12 +15,12 @@ import java.util.Map;
  */
 
 public class DestinationOptionsDialog {
-    public static String destinations[] = {"Dest1", "Dest2", "Dest3", "Dest4"};
+    public static String destinations[] = {"Room B-406", "Room B-407", "Room B-408", "Room B-4010"};
     public static Map<String, DestinationContainer> destinationMap = new HashMap<>();
     public static double x = 722250.000, y = 3159632.00;
     static {
         destinationMap.put(destinations[0], new DestinationContainer(destinations[0],
-                85.328733+x, 4.245343+y, 228.476078));
+                116+x, 7.3+y, 237.455994));
         destinationMap.put(destinations[1], new DestinationContainer(destinations[1],
                 85.328733+x, 4.245343+y, 228.476078));
         destinationMap.put(destinations[2], new DestinationContainer(destinations[2],

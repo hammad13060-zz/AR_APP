@@ -152,12 +152,14 @@ public class NavigationSetupActivity extends AppCompatActivity {
 
                         JSONArray pathArray = State.UTMPath.getJSONArray("path");
                         State.path = new ArrayList<LatLng>();
+                        State.steps = new ArrayList<DestinationContainer>();
                         State.visited = new ArrayList<Boolean>();
                         for (int i = 0; i < pathArray.length(); i++) {
                             JSONArray loc = pathArray.getJSONArray(i);
                             LatLng latLng = (new UTMRef(loc.getDouble(0), loc.getDouble(1), "R", 43)).toLatLng();
                             State.path.add(latLng);
                             State.visited.add(false);
+                            State.steps.add(new DestinationContainer("step", loc.getDouble(0), loc.getDouble(1), loc.getDouble(2)));
                         }
                         State.visited.set(0, true);
                         Intent i = new Intent(getApplicationContext(), MapActivity.class);

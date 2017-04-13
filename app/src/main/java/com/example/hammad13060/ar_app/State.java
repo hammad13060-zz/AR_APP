@@ -22,5 +22,6 @@ public class State {
     public static JSONObject UTMPath = null;
     public static ArrayList<LatLng> path = null;
     public static ArrayList<Boolean> visited = null;
-    public Directions direction = null;
+    public static ArrayList<DestinationContainer> steps;
+    public static Directions direction = null;
 }

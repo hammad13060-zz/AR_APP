@@ -55,6 +55,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
@@ -203,17 +205,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initMapHandler() {
-        if (mapHandler == null) {
+        //if (mapHandler == null) {
             mapHandler = new MapHandler(this, getOnMapClickListner(), 17);
-        }
+        //}
     }
 
     private void getMapFragment() {
-        if (mapFragment == null && mapHandler != null) {
+        //if (mapFragment == null && mapHandler != null) {
             mapFragment = (MapFragment) getFragmentManager()
                     .findFragmentById(R.id.corner_map);
             mapFragment.getMapAsync(mapHandler);
-        }
+        //}
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -229,6 +231,51 @@ public class MainActivity extends AppCompatActivity {
             mapHandler.updateLocation(e);
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateMetaInfo(MetaEvent e) {
+        TextView view = (TextView)findViewById(R.id.meta_text_view);
+        try {
+            view.setText(e.meta.toString(2));
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateDirectionUi(UpdateDirectionUi e) {
+        if (State.smartNavigation) {
+            ImageView imageView = (ImageView) findViewById(R.id.imageView);
+            if (State.direction == Directions.UP) {
+                Log.d("dir", "up");
+                imageView.setImageResource(R.drawable.up);
+            } else if (State.direction == Directions.DOWN) {
+                Log.d("dir", "down");
+                imageView.setImageResource(R.drawable.down);
+            } else if (State.direction == Directions.RIGHT) {
+                Log.d("dir", "right");
+                imageView.setImageResource(R.drawable.right);
+            } else if (State.direction == Directions.LEFT) {
+                Log.d("dir", "left");
+                imageView.setImageResource(R.drawable.left);
+            } else if (State.direction == Directions.STRAIGHT) {
+                Log.d("dir", "straight");
+                imageView.setImageResource(R.drawable.straight);
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onJourneyComplete(JourneyComplete e) {
+        if (State.smartNavigation) {
+            State.smartNavigation = false;
+            State.UTMPath = null;
+            State.path = null;
+            State.visited = null;
+            Toast.makeText(getApplicationContext(), "Destination Reached", Toast.LENGTH_SHORT);
+        }
+    }
+
 
     public GoogleMap.OnMapClickListener getOnMapClickListner() {
         return new GoogleMap.OnMapClickListener() {
