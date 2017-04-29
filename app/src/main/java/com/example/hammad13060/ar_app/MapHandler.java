@@ -102,7 +102,7 @@ public class MapHandler implements OnMapReadyCallback {
                     switch (e.level) {
                         case 0:
                             groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
-                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.acad2))
+                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.ground_floor))
                                     .positionFromBounds(new LatLngBounds(
                                             new LatLng(28.544204557084843, 77.27199076000993),
                                             new LatLng(28.544786146043666, 77.27309369835217)
@@ -110,7 +110,7 @@ public class MapHandler implements OnMapReadyCallback {
                             break;
                         case 1:
                             groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
-                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.acad2))
+                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.first_floor))
                                     .positionFromBounds(new LatLngBounds(
                                             new LatLng(28.544204557084843, 77.27199076000993),
                                             new LatLng(28.544786146043666, 77.27309369835217)
@@ -118,7 +118,7 @@ public class MapHandler implements OnMapReadyCallback {
                             break;
                         case 2:
                             groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
-                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.acad2))
+                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.second_floor))
                                     .positionFromBounds(new LatLngBounds(
                                             new LatLng(28.544204557084843, 77.27199076000993),
                                             new LatLng(28.544786146043666, 77.27309369835217)
@@ -126,7 +126,7 @@ public class MapHandler implements OnMapReadyCallback {
                             break;
                         case 3:
                             groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
-                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.acad2))
+                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.third_floor))
                                     .positionFromBounds(new LatLngBounds(
                                             new LatLng(28.544204557084843, 77.27199076000993),
                                             new LatLng(28.544786146043666, 77.27309369835217)
@@ -134,7 +134,7 @@ public class MapHandler implements OnMapReadyCallback {
                             break;
                         case 4:
                             groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
-                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.acad2))
+                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.fourth_floor))
                                     .positionFromBounds(new LatLngBounds(
                                             new LatLng(28.544204557084843, 77.27199076000993),
                                             new LatLng(28.544786146043666, 77.27309369835217)
@@ -142,7 +142,7 @@ public class MapHandler implements OnMapReadyCallback {
                             break;
                         case 5:
                             groundOverlay = googleMap.addGroundOverlay(new GroundOverlayOptions()
-                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.acad2))
+                                    .image(BitmapDescriptorFactory.fromResource(R.drawable.fifth_floor))
                                     .positionFromBounds(new LatLngBounds(
                                             new LatLng(28.544204557084843, 77.27199076000993),
                                             new LatLng(28.544786146043666, 77.27309369835217)

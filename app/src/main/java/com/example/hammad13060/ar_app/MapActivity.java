@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
@@ -86,6 +87,8 @@ public class MapActivity extends AppCompatActivity {
     public void onIndoorLocationUpdate(IndoorLocationEvent e) {
         if (mapHandler != null && State.smartNavigation) {
             mapHandler.updateLocation(e);
+            Log.d("current indoor location", String.valueOf(e.x) + ", " + String.valueOf(e.y) + ", " + String.valueOf(e.z));
+            Log.d("current indoor location", String.valueOf(e.x) + ", " + String.valueOf(e.y) + ", " + String.valueOf(e.z));
         }
     }
 }

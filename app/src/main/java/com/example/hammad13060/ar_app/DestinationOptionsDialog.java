@@ -15,7 +15,7 @@ import java.util.Map;
  */
 
 public class DestinationOptionsDialog {
-    public static String destinations[] = {"Room B-406", "Room B-407", "Room B-408", "Room B-4010"};
+    public static String destinations[] = {"Room B-406", "Room B-407", "Room B-408", "Room B-4010", "CDX", "Acad Entry 1", "Acad Entry 2"};
     public static Map<String, DestinationContainer> destinationMap = new HashMap<>();
     public static double x = 722250.000, y = 3159632.00;
     static {
@@ -27,6 +27,12 @@ public class DestinationOptionsDialog {
                 89.232023+x, -7.962436+y, 232.051479));
         destinationMap.put(destinations[3], new DestinationContainer(destinations[3],
                 99.245795+x, 5.679707+y, 228.311822));
+        //destinationMap.put(destinations[4], new DestinationContainer(destinations[4], x+4.52, y+70.76, 223.056));
+        //destinationMap.put(destinations[5], new DestinationContainer(destinations[5], x+21.13, y+89.37, 223.056));
+        //destinationMap.put(destinations[6], new DestinationContainer(destinations[6], x-11.42, y+88.04, 223.056));
+        destinationMap.put(destinations[4], new DestinationContainer(destinations[4], x+70.76, y+4.52, 223.056));
+        destinationMap.put(destinations[5], new DestinationContainer(destinations[5], x+89.37, y+21.13, 223.056));
+        destinationMap.put(destinations[6], new DestinationContainer(destinations[6], x+88.04, y-11.42, 223.056));
     }
     public static void showDialog(final NavigationSetupActivity context) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);

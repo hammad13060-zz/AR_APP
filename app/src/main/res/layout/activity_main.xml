@@ -16,7 +16,7 @@
         android:text="CAMERA" />
 
     <!--android:text="\nBuilding: Academic Block\nFloor: Fifth\nWing: B\nRoom: Faculty Lounge"-->
-    <TextView
+    <!--TextView
         android:id="@+id/meta_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         android:textSize="20dp"
         android:text="fetching info"
         android:textAlignment="center"
-        android:background="@drawable/box"/>
+        android:background="@drawable/box"/-->
         <!--android:background="@drawable/ic_airplay"/-->
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"

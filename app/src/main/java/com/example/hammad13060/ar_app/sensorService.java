@@ -124,6 +124,11 @@ public class SensorService extends Service implements GoogleApiClient.Connection
         longitude = mLastLocation.getLongitude();
         Log.d(TAG, "Location: " + mLastLocation.toString());
         sendLocationEvent();
+        try {
+            fetchMeta();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         mSensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
 
@@ -183,11 +188,11 @@ public class SensorService extends Service implements GoogleApiClient.Connection
         SensorManager.getRotationMatrix(R, null, gravity, geomagnetic);
         float rhs[] = {gyro[0], gyro[1], gyro[2], 1.0f};
         Matrix.multiplyMV(dir, 0, R, 0, rhs, 0);
-        try {
+        /*try {
             fetchMeta();
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
         Log.d(TAG, "Direction Vector: " + dir[0] + ", " + dir[1] + ", " + dir[2]);
     }
 
@@ -215,6 +220,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Log.d(NavigationSetupActivity.class.getName(), "Client Error while hitting /indoorLocation");
+                    hitIndoorLocation();
                     // Toast.makeText(getApplicationContext(), "Client Error while hitting /indoorLocation", Toast.LENGTH_SHORT);
                 }
 
@@ -290,9 +296,9 @@ public class SensorService extends Service implements GoogleApiClient.Connection
             };
 
             double[] d2 = {
-                    State.steps.get(index + 2).getX() - State.steps.get(index).getX(),
-                    State.steps.get(index + 2).getY() - State.steps.get(index).getY(),
-                    State.steps.get(index + 2).getZ() - State.steps.get(index).getZ()
+                    State.steps.get(index + 2).getX() - State.steps.get(index + 1).getX(),
+                    State.steps.get(index + 2).getY() - State.steps.get(index + 1).getY(),
+                    State.steps.get(index + 2).getZ() - State.steps.get(index + 1).getZ()
             };
 
             double angle = 57.3248 * cosine(d1, d2);
@@ -370,7 +376,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
 
     private void fetchMeta() throws JSONException {
         JSONObject req = new JSONObject();
-        if (accuracy <= 10.0) {
+        if (accuracy <= 2.0) {
             JSONArray directionVector = new JSONArray();
             JSONArray position = new JSONArray();
             directionVector.put(0, dir[0]);
@@ -389,7 +395,7 @@ public class SensorService extends Service implements GoogleApiClient.Connection
             directionVector.put(2, dir[2]);
             position.put(0, mLastIndoorLocation.getLatitude());
             position.put(1, mLastIndoorLocation.getLongitude());
-            position.put(2, mLastIndoorLocation.getAltitude());
+            position.put(2, mLastIndoorLocation.getAltitude() + 2.0);
             req.put("direction", directionVector);
             req.put("origin", position);
         }
@@ -405,12 +411,28 @@ public class SensorService extends Service implements GoogleApiClient.Connection
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "fetchMeta error on client side");
+                try {
+                    Thread.sleep(2000);
+                    try {
+                        fetchMeta();
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                } catch (InterruptedException e2) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     EventBus.getDefault().post(new MetaEvent(new JSONObject(response.body().string())));
+                    try {
+                        Thread.sleep(2000);
+                        fetchMeta();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

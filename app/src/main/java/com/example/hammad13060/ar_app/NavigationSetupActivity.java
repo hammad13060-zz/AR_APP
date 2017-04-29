@@ -85,6 +85,7 @@ public class NavigationSetupActivity extends AppCompatActivity {
                                     responseJSON.getDouble("y"),
                                     responseJSON.getDouble("z")
                                     );
+                            Log.d("currentLocation", String.valueOf(getIndoorLocationEvent.x) + ", " + String.valueOf(getIndoorLocationEvent.y) + ", " + String.valueOf(getIndoorLocationEvent.z));
                             EventBus.getDefault().post(getIndoorLocationEvent);
                         } catch (JSONException e) {
                             Log.d(NavigationSetupActivity.class.getName(), "Invalid Response from /indoorLocation");

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.hammad13060.ar_app.OptionActivity">
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="267dp"
+        android:layout_height="78dp"
+        android:onClick="onSmartNavigation"
+        android:text="Smart Navigation"
+        tools:layout_editor_absoluteX="59dp"
+        tools:layout_editor_absoluteY="363dp"
+        android:layout_above="@+id/button2"
+        android:layout_alignStart="@+id/button2"
+        android:layout_marginBottom="95dp" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="267dp"
+        android:layout_height="78dp"
+        android:onClick="onFacilityIdentification"
+        android:text="Facility Identification"
+        tools:layout_editor_absoluteX="59dp"
+        tools:layout_editor_absoluteY="152dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="129dp" />
+</RelativeLayout>

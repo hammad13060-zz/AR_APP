@@ -1,20 +1,12 @@
 package com.example.hammad13060.ar_app;
 
 import android.*;
-import android.Manifest;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -24,21 +16,17 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.location.Location;
 import android.media.ImageReader;
-import android.graphics.Matrix;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
 import android.util.Log;
+import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,19 +35,10 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import android.util.Size;
 import android.widget.Toast;
 
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
@@ -67,24 +46,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
-import okhttp3.Call;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-
-// reference for camera https://inducesmile.com/android/android-camera2-api-example-tutorial/
-
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class MainActivity extends Activity {
+public class FacilityIdentificationActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private MapHandler mapHandler;
     private MapFragment mapFragment;
@@ -115,49 +81,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        //startSensorService();
+        setContentView(R.layout.activity_facility_identification);
 
         // camera setup
         textureView = (TextureView) findViewById(R.id.texture);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
-
-        FloatingActionButton navButton = (FloatingActionButton) findViewById(R.id.nav_action);
-        navButton.show();
-        navButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (State.smartNavigation) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle("Stop Navigation!");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //TODO
-                            State.smartNavigation = false;
-                            State.UTMPath = null;
-                            State.path = null;
-                            State.visited = null;
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-
-                } else {
-                    Intent i = new Intent(getApplication(), NavigationSetupActivity.class);
-                    startActivity(i);
-                }
-            }
-        });
-
-        LatLng latLng = (new UTMRef(722445.924274, 3159942.55397, "R", 43)).toLatLng();
-        Log.d("UTM TEST", latLng.toString());
     }
 
     @Override
@@ -171,17 +100,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        initMapHandler();
-        //startSensorService();
         EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        initMapHandler();
-        getMapFragment();
-        //startSensorService();
         startBackgroundThread();
         if (textureView.isAvailable()) {
             openCamera();
@@ -209,49 +133,25 @@ public class MainActivity extends Activity {
         super.onDestroy();
     }
 
-    private void startSensorService() {
-        if (!State.sensorServiceRunning) {
-            startService(new Intent(this, SensorService.class));
-        }
-    }
-
-    private void initMapHandler() {
-        //if (mapHandler == null) {
-            mapHandler = new MapHandler(this, getOnMapClickListner(), 17);
-        //}
-    }
-
-    private void getMapFragment() {
-        //if (mapFragment == null && mapHandler != null) {
-            mapFragment = (MapFragment) getFragmentManager()
-                    .findFragmentById(R.id.corner_map);
-            mapFragment.getMapAsync(mapHandler);
-        //}
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLocationUpdate(LocationEvent e) {
-        if (mapHandler != null && !State.smartNavigation) {
-            mapHandler.UpdateLocation(e.getLatitude(), e.getLongitude());
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onIndoorLocationUpdate(IndoorLocationEvent e) {
-        if (mapHandler != null && State.smartNavigation) {
-            mapHandler.updateLocation(e);
-        }
-    }
-
-    /*@Subscribe(threadMode = ThreadMode.MAIN)
     public void updateMetaInfo(MetaEvent e) {
         TextView view = (TextView)findViewById(R.id.meta_text_view);
         try {
-            view.setText(e.meta.toString(2));
+            JSONArray meta = e.meta.getJSONArray("meta");
+            String display = "";
+            if (meta.length() == 0) {
+                view.setText("Nothing Found");
+            } else {
+                for (int i = 0; i < meta.length(); i++) {
+                    display = display + meta.getString(i) + "\n";
+                }
+                view.setText(display);
+            }
+            //view.setText(e.meta.toString(2));
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
-    }*/
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateDirectionUi(UpdateDirectionUi e) {
@@ -343,7 +243,7 @@ public class MainActivity extends Activity {
         @Override
         public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            Toast.makeText(MainActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
+            Toast.makeText(FacilityIdentificationActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
@@ -387,7 +287,7 @@ public class MainActivity extends Activity {
                 }
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    Toast.makeText(MainActivity.this, "Configuration change", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FacilityIdentificationActivity.this, "Configuration change", Toast.LENGTH_SHORT).show();
                 }
             }, null);
         } catch (CameraAccessException e) {
@@ -418,8 +318,8 @@ public class MainActivity extends Activity {
             assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
             // Add permission for camera and let user grant the permission
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
                 return;
             }
             manager.openCamera(cameraId, stateCallback, null);
@@ -434,7 +334,7 @@ public class MainActivity extends Activity {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 // close the app
-                Toast.makeText(MainActivity.this, "Sorry!!!, you can't use this app without granting permission", Toast.LENGTH_LONG).show();
+                Toast.makeText(FacilityIdentificationActivity.this, "Sorry!!!, you can't use this app without granting permission", Toast.LENGTH_LONG).show();
                 finish();
             }
         }
@@ -466,7 +366,4 @@ public class MainActivity extends Activity {
 
         }
     }
-
-
-
-    }
+}
